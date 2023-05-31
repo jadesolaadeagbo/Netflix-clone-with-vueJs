@@ -69,9 +69,29 @@
             
             <div>
                 <h1 class="lg:text-5xl text-3xl font-bold flex justify-center pt-16">Frequently Asked Questions</h1>
+
+                <div class="lg:ml-40 ml-10">
+                        <AccordionComponent/>
+                </div>
+
+
+                <!-- <div class="grid place-items-center">
+                  <AccordionComponent/>
+                </div> -->
+
+
             </div>
         </div>            
     </div>
 
 
 </template>
+
+<script>
+import AccordionComponent from '@/components/AccordionComponent.vue';
+export default{
+    components:{
+        AccordionComponent
+    }
+}
+</script>
