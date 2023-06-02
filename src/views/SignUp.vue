@@ -8,60 +8,87 @@
     <div class="mx-auto mt-10 w-1/3">
       <span class="">
         <p class="text-sm">STEP 1 OF 3</p>
-        <p class="text-4xl font-medium mt-1">Welcome back!</p>
-        <p class="text-4xl font-medium mt-2">Joining Netflix is easy.</p>
-        <p class="text-lg mt-4">Enter your password and you'll be watching in no time.</p>
-        <p class="mt-5">Email</p>
-        <p class="font-medium">{{ inputValue }}</p>
+        <p class="text-4xl text-gray-800 font-medium mt-1">Welcome back!</p>
+        <p class="text-4xl font-medium mt-2 text-gray-800">Joining Netflix is easy.</p>
+        <p class="text-lg mt-4 text-gray-800">Enter your password and you'll be watching in no time.</p>
+        <p class="mt-5 text-gray-800">Email</p>
+        <p class="font-medium text-gray-800">{{ inputValue }}</p>
 
-        <form class="w-full">
-          <input class="border border-gray-500 w-full my-4 py-4 pl-2" type="password" placeholder="Enter your password"/>
-        </form>
-        <a href="https://www.netflix.com/LoginHelp" class="text-blue-600">Forgot your password?</a><br>
-        <button class="my-5 bg-customRed w-full py-5 text-white text-2xl rounded" type="submit">Next</button>
+        <form class="w-full mt-4" @submit="handleSubmit">
+          <input @input="enterInput" class="border border-gray-500 w-full  py-4 pl-2" type="password" v-model="passwordValue" :class="{'border-customRed': showError}" placeholder="Enter your password"/>
+          <p class="text-sm text-customRed " v-if="showError">{{ PasswordError }}</p>
+        
+        <p class="mt-4">
+          <a href="https://www.netflix.com/LoginHelp" class="text-blue-600 ">Forgot your password?</a><br>
+        </p>
+        <button class="my-5 bg-customRed w-full py-5 text-white text-2xl rounded hover:bg-red-600" type="submit">Next</button></form>
       </span>
     </div>
 
-    <div class="bg-gray-100 border-t mt-40 z-[100] px-20 pt-5">
-
-<a href="https://help.netflix.com/contactus" class="text-gray-500">Questions?Contact us.</a>
-
-<span class="flex gap-16 md:gap-48 pt-5 items-start pb-10 text-sm">
-    <div class="flex flex-col text-gray-500 space-y-3">
-        <a href="https://help.netflix.com/support/412">FAQ</a>
-        <a href="https://help.netflix.com/legal/privacy">Privacy</a>
-    </div>
-
-    <div class="flex flex-col text-gray-500 space-y-3 ">
-        <a href="https://help.netflix.com/">Help Center</a> 
-        <a href="https://www.netflix.com/signup/password?locale=en-NG#">Cookie Preferences</a>                       
-    </div>
-
-    <div class="flex flex-col text-gray-500 space-y-3">
-        <a href="https://netflix.shop/">Netflix Shop</a>
-        <a href="https://help.netflix.com/legal/corpinfo">Corporate Information</a>
-    </div>    
-    
-    <div class="flex flex-col text-gray-500 space-y-3">
-        <a href="https://help.netflix.com/legal/termsofuse">Terms of Use</a>
-    </div>      
-
-</span>
-
-
-
-</div>
+    <SignupFooter/>
   </div>
 </template>
 
 <script>
 import { useStore } from 'vuex';
+import SignupFooter from "@/components/SignupFooter.vue"
 export default{
+  components:{
+    SignupFooter
+  },
   computed:{
     inputValue(){
       const store = useStore();
       return store.state.inputValue;
     }
+  },
+  data(){
+    return{
+      showError: false,
+      passwordValue:'',
+      PasswordError:''
+    }
+  },
+  methods:{
+    enterInput(event){
+      event.preventDefault(event);
+      if(this.passwordValue.length < 8){
+        this.showError = true;
+        this.PasswordError = "Password should be at least 8 characters long"
+      }
+      else{
+        this.showError = false;
+      }
+    },
+    handleSubmit(event){
+      event.preventDefault();
+      if(this.passwordValue===''){
+        this.showError = true;
+        this.PasswordError = 'Password is required!'
+      }
+      if(!/[a-z]/.test(this.passwordValue)){
+        this.showError = true;
+        this.PasswordError = 'Password should contain at least one lower case letter'
+      }
+      if (!/[A-Z]/.test(this.passwordValue)) {
+        this.showError = true;
+        this.PasswordError = "Password should contain at least one uppercase letter.";
   }
+
+      if (!/\d/.test(this.passwordValue)) {
+        this.showError = true;
+        this.PasswordError ="Password should contain at least one digit.";
+  }
+
+      if (!/[!@#$%^&*]/.test(this.passwordValue)) {
+        this.showError = true;
+        this.PasswordError ="Password should contain at least one special character (!, @, #, $, %, ^, &, *).";
+  }
+      else{
+        this.showError= false;
+        this.$router.push('/chooseplan')
+      }
+    }
+  },
 }
 </script>
