@@ -1,32 +1,37 @@
 <template>
     <div class="w-full flex flex-col ">
-        <div class="w-full lg:h-screen bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/ceb3b1eb-2673-4dd9-a6e3-0cd7a5e130ee/8b9932b0-a2a9-4226-b129-5dd7c8eba66a/NG-en-20230522-popsignuptwoweeks-perspective_alpha_website_medium.jpg')] bg-cover md:bg-auto bg-center">
+        <div class="w-full lg:h-screen bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/76c10fc9-7ccd-4fbf-bc59-f16a468921ca/3f3954fa-4c3d-4566-ace8-e7b9318bf30b/NG-en-20230529-popsignuptwoweeks-perspective_alpha_website_medium.jpg')] bg-cover md:bg-auto bg-center">
             <div class="w-full h-full bg-black/60 ">
                 <div class="lg:px-40 py-5 flex justify-between items-center px-10">
                     <h1 class="text-customRed lg:text-5xl text-2xl sm:text-4xl font-bold">NETFLIX</h1>
-                    <button class="text-white bg-customRed px-4 py-1.5 text-sm rounded-md flex font-medium flex-shrink-0">Sign In</button>         
+                    <router-link to="/login" class="text-white bg-customRed px-4 py-1.5 text-sm rounded-md flex font-medium flex-shrink-0 hover:bg-red-700">Sign In</router-link>         
                 </div>
                 
 
                 <div class="flex justify-center lg:mt-48 sm:mt-28 mt-16">
-                    <span class="text-white">
+                    <span class="text-white sm:pb-20 ">
                         <h1 class="lg:text-5xl font-extrabold text-3xl text-center">Unlimited movies, TV shows, and more</h1>
                         <p class="lg:text-2xl lg:my-8 flex justify-center text-xl my-4">Watch anywhere. Cancel anytime.</p>
                         <p class="flex justify-center lg:text-2xl sm:text-xl px-10 text-center">Ready to watch? Enter your email to create or restart your membership.</p>
-                        <div class="flex justify-center p-5">
-                            <form class="flex gap-2 items-center w-full justify-center sm:pb-20  sm:flex-row flex-col">
+                        <div class="flex justify-center pt-5">
+                            <form @submit="handleSubmit" class="flex gap-2 items-center w-full justify-center  sm:flex-row flex-col">
 
-                                <input class="sm:w-1/2 w-3/4 bg-black/50 sm:h-14 h-14 pl-5 text-lg border border-gray-500 border-solid rounded text-gray-100" type="email" name="email" placeholder="Email address"/>
+                                <input :class="{'border-customRed' :showError}"  @focus="isFocused =true" 
+                                @blur="isFocused = false"
+                                class="sm:w-1/2 w-3/4 bg-black/50 sm:h-14 h-14 pl-5 text-lg border border-gray-500 border-solid rounded text-gray-100 outline-offset-2 outline-2"
+                                type="email" v-model="inputValue"
+                                @input="updateInputValue" name="email" placeholder="Email address"/>
 
-                                <button class="bg-customRed sm:text-2xl text-xl px-5 rounded flex items-center sm:h-full h-12 gap-2">Get Started<i class="fa-solid fa-chevron-right"></i></button>
+                                <button type="submit" class="bg-customRed sm:text-2xl text-xl px-5 rounded flex items-center sm:h-full h-12 gap-2">Get Started<i class="fa-solid fa-chevron-right"></i></button>
                             </form>
                             
-
-                            
                         </div>
+                        <p v-if="showError" class="text-customRed text-sm pl-36 font-medium"><i class="fa fa-times-circle-o" aria-hidden="true"></i>{{ErrorMessage}} </p>
                         
                     </span> 
+
                 </div>
+
                 
             </div>       
         </div>  
@@ -134,9 +139,55 @@
 
 <script>
 import AccordionComponent from '@/components/AccordionComponent.vue';
+import {mapMutations} from 'vuex'
+
 export default{
     components:{
         AccordionComponent
-    }
+    },
+    data(){
+        return{
+            inputValue:'',
+            showError: false,
+            ErrorMessage:''
+        }
+    },
+    computed:{
+        inputFieldValue:{
+            get(){
+                return this.$store.state.inputValue;
+            },
+            set(value){
+                this.updateInputValue(value);
+            },
+        },
+    },
+    methods:{
+        handleSubmit(event){
+
+            event.preventDefault();
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if(this.inputValue.trim()===''){
+                this.showError = true;
+                this.ErrorMessage = 'Email is required!'
+            } else if(!emailRegex.test(this.inputValue)) {
+                this.showError = true;
+                this.ErrorMessage = 'Please enter a valid email address'
+            }
+            else{
+                this.showError = false;
+
+                this.$router.push('/signup')
+            }
+        },
+        ...mapMutations(['setInputValue']),
+        updateInputValue(event){
+            const value = event.target.value;
+            this.setInputValue(value)
+        },
+    },
 }
 </script>

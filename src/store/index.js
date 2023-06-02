@@ -1,14 +1,23 @@
 import { createStore } from 'vuex'
 
 export default createStore({
-  state: {
+  state() {
+    return{
+      inputValue:'',
+    }
   },
-  getters: {
+  getters: { 
   },
   mutations: {
+    setInputValue(state, value){
+      state.inputValue = value;
+    }
   },
   actions: {
+
   },
   modules: {
-  }
+  },
 })
+
+
